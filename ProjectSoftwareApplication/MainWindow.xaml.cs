@@ -24,6 +24,7 @@ namespace ProjectSoftwareApplication
     {
         private string _symbol;
         private decimal? _regularMarketPrice;
+        private string _currency;
         private string _fiftyTwoWeekRangeFmt;
         private string _averageAnalystRating;
         private string _dividendYieldFmt;
@@ -63,11 +64,11 @@ namespace ProjectSoftwareApplication
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        SearchResponseLbl.Content = "Succes!";
                         string jsonString = await response.Content.ReadAsStringAsync();
                         JObject jsonResponse = JObject.Parse(jsonString);
                         string symbol = jsonResponse["symbol"]?.ToString();
                         decimal? regularMarketPrice = jsonResponse["regularMarketPrice"]?["raw"]?.ToObject<decimal>();
+                        string currency = jsonResponse["currency"].ToString();
                         string fiftyTwoWeekRange = jsonResponse["fiftyTwoWeekRange"]?["fmt"]?.ToString();
                         string averageAnalystRating = jsonResponse["averageAnalystRating"]?.ToString();
                         string dividendYieldFmt = jsonResponse["dividendYield"]?["fmt"]?.ToString();
@@ -76,6 +77,7 @@ namespace ProjectSoftwareApplication
 
                         _symbol = symbol;
                         _regularMarketPrice = regularMarketPrice;
+                        _currency = currency;
                         _fiftyTwoWeekRangeFmt = fiftyTwoWeekRange;
                         _averageAnalystRating = averageAnalystRating;
                         _dividendYieldFmt = dividendYieldFmt;
@@ -89,7 +91,12 @@ namespace ProjectSoftwareApplication
 
                         if (regularMarketPrice.HasValue)
                         {
-                            PriceLbl.Content = $"Price: ${regularMarketPrice.Value.ToString("F2")}";
+                            PriceLbl.Content = $"Price: {currency}{regularMarketPrice.Value.ToString("F2")}";
+                        }
+
+                        if (currency != null)
+                        {
+                            CurrencyLbl.Content = $"Currency: {currency}";
                         }
 
                         if (!string.IsNullOrEmpty(fiftyTwoWeekRange) && fiftyTwoWeekRange != "{")
@@ -145,7 +152,7 @@ namespace ProjectSoftwareApplication
 
         private void DataBankButton_Click(object sender, RoutedEventArgs e)
         {
-            MySQLExporter.ExportToMySql(_symbol, _regularMarketPrice, _fiftyTwoWeekRangeFmt, _averageAnalystRating, _dividendYieldFmt, _marketCap, _earningsDate);
+            MySQLExporter.ExportToMySql(_symbol, _regularMarketPrice, _currency,_fiftyTwoWeekRangeFmt, _averageAnalystRating, _dividendYieldFmt, _marketCap, _earningsDate); 
         }
     }
 }

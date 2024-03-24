@@ -10,9 +10,9 @@ namespace ProjectSoftwareApplication
 {
     internal class MySQLExporter
     {
-        private static readonly string connectionString = "Server=localhost;Database=tickerdata;User ID=root;Password=¨PASSWORD;";
-
-        public static void ExportToMySql(string symbol, decimal? price, string fiftyTwoWeekRange, string averageAnalystRating, string dividendYield, string marketCap, string earningsDate)
+        private static readonly string connectionString = "Server=localhost;Database=tickerdata;User ID=root;Password=ApplicationSoftware;";
+        //TESTTEST
+        public static void ExportToMySql(string symbol, decimal? price, string currency, string fiftyTwoWeekRange, string averageAnalystRating, string dividendYield, string marketCap, string earningsDate)
         {
             try
             {
@@ -20,12 +20,13 @@ namespace ProjectSoftwareApplication
                 {
                     connection.Open();
 
-                    string query = @"INSERT INTO StockData (Symbol, Price, FiftyTwoWeekRange, AverageAnalystRating, DividendYield, MarketCap, EarningsDate) 
-                                 VALUES (@Symbol, @Price, @FiftyTwoWeekRange, @AverageAnalystRating, @DividendYield, @MarketCap, @EarningsDate)";
+                    string query = @"INSERT INTO StockData (Symbol, Price, Currency, FiftyTwoWeekRange, AverageAnalystRating, DividendYield, MarketCap, EarningsDate) 
+                                 VALUES (@Symbol, @Price, @Currency, @FiftyTwoWeekRange, @AverageAnalystRating, @DividendYield, @MarketCap, @EarningsDate)";
 
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     cmd.Parameters.AddWithValue("@Symbol", symbol);
-                    cmd.Parameters.AddWithValue("@Price", price.HasValue ? .ToDecimal(price) : "N/A");
+                    cmd.Parameters.AddWithValue("@Price", price.HasValue ? Convert.ToDecimal(price) : "N/A");
+                    cmd.Parameters.AddWithValue("@Currency", currency);
                     cmd.Parameters.AddWithValue("@FiftyTwoWeekRange", fiftyTwoWeekRange ?? "N/A");
                     cmd.Parameters.AddWithValue("@AverageAnalystRating", averageAnalystRating ?? "N/A");
                     cmd.Parameters.AddWithValue("@DividendYield", dividendYield ?? "N/A");
